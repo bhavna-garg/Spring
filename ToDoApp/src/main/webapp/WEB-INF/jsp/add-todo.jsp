@@ -7,14 +7,11 @@
 <title>Insert title here</title>
 </head>
 <body>
-<font color="red">${errorMsg}</font>
-<form method="post">
-Name:
-<input type="text", name="name"></input>
-Password:
-<input type="password", name="password"></input>
-<input type="submit"></input>
+Add Todo for ${name }
+<br>
+<form action="POST">
+Description:
+<input type="textarea" name= "description"/>
 </form>
-
 </body>
 </html>
