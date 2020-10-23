@@ -20,13 +20,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
 import com.example.demo.model.Todo;
+import com.example.demo.services.TodoRepository;
 import com.example.demo.services.TodoService;
 
 @Controller
 public class TodoController {
+	//@Autowired
+	//TodoService service;
 	@Autowired
-	TodoService service;
-	
+	TodoRepository todoRepository;
 	
 	@InitBinder
 	protected void initBinder(WebDataBinder binder) {
@@ -39,7 +41,8 @@ public class TodoController {
 	@RequestMapping(value="/list-todos",method=RequestMethod.GET)
 	public String listTodos(ModelMap model) {
 		String name = getLoggedInUserName(model);
-		model.put("todos", service.retriveTodos(name));
+		//model.put("todos", service.retriveTodos(name));
+		model.put("todos", todoRepository.findByUser(name));
 		return "list-todos";
 		
 	}
@@ -70,7 +73,9 @@ public class TodoController {
 			return "todo";
 		}
 		String name = getLoggedInUserName(model);
-		service.addTodo(name, todo.getDesc(), todo.getTargetDate(), false);
+		todo.setUser(name);
+		todoRepository.save(todo);
+		//service.addTodo(name, todo.getDesc(), todo.getTargetDate(), false);
 		//model.put("todos", service.retriveTodos(name));
 		//return "list-todos";
 		return "redirect:/list-todos";
@@ -80,7 +85,8 @@ public class TodoController {
 	@RequestMapping(value="/delete-todo",method=RequestMethod.GET)
 	public String deleteTodo(ModelMap model, @RequestParam int id) {
 		
-		service.deleteTodo(id);
+		//service.deleteTodo(id);
+		todoRepository.deleteById(id);
 		return "redirect:/list-todos";
 		
 	}
@@ -88,7 +94,8 @@ public class TodoController {
 	@RequestMapping(value="/update-todo",method=RequestMethod.GET)
 	public String showUpdateTodoPage(ModelMap model, @RequestParam int id) {
 		
-		Todo todo = service.retriveTodo(id);
+		//Todo todo = service.retriveTodo(id);
+		Todo todo = todoRepository.getOne(id);
 		model.put("todo", todo);
 		return "todo";
 		
@@ -100,7 +107,8 @@ public class TodoController {
 		if(result.hasErrors()) {
 			return "todo";
 		}
-		service.updateTodo(todo);
+		//service.updateTodo(todo);
+		todoRepository.save(todo);
 		
 		return "redirect:/list-todos";
 		
